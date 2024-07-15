@@ -11,4 +11,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOSTNAME, () => {
   console.log(`Server running at http://${HOSTNAME}:${PORT}`);
+  console.log("node version is:" + process.version);
 });
