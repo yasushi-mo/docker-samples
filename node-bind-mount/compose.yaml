@@ -1,0 +1,9 @@
+services:
+  app:
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    build: .
