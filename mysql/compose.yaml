@@ -1,0 +1,14 @@
+services:
+  db:
+    build: .
+    container_name: "db-container"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3306:3306"
+#     volumes:
+#       - type: volume
+#         source: db-compose-volume
+#         target: /var/lib/mysql
+# volumes:
+#   db-compose-volume:
