@@ -1,0 +1,34 @@
+services:
+  app:
+    container_name: "app-container"
+    build: . # Dockerfile path
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./source
+        target: /app
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASSWORD: userpassword
+      DB_NAME: sampledb
+  db:
+    container_name: "db-container"
+    image: mysql:9.0.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: bind
+        source: ./db
+        target: /docker-entrypoint-initdb.d
+      - type: volume
+        source: db-volume
+        target: /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sampledb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+volumes:
+  db-volume:
