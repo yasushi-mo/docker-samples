@@ -1,6 +1,12 @@
 import { ServerResponse } from "http";
 import { createConnection } from "./database";
-import { User } from "./type";
+import { RowDataPacket } from "mysql2";
+
+type User = RowDataPacket & {
+  id: string;
+  name: string;
+  email: string;
+};
 
 const handleError = (res: ServerResponse, error: unknown) => {
   console.error("Error: ", error);
