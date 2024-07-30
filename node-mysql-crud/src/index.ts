@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { createConnection } from "./database";
-import { getUserById, getUsers } from "./users";
+import { createUser, getUserById, getUsers } from "./users";
 
 const handleRequest = async (req: IncomingMessage, res: ServerResponse) => {
   const [_, resource, resourceId] = req.url?.split("/") || [];
@@ -14,9 +14,13 @@ const handleRequest = async (req: IncomingMessage, res: ServerResponse) => {
   const DECIMAL_RADIX = 10; // Named constant for the radix
   const id = resourceId ? parseInt(resourceId, DECIMAL_RADIX) : null;
 
+  console.log("req.method:", req.method);
   switch (req.method) {
     case "GET":
       id ? await getUserById(id, res) : await getUsers(res);
+      break;
+    case "POST":
+      await createUser(req, res);
       break;
     default:
       res.writeHead(404, { "Content-Type": "application/json" });

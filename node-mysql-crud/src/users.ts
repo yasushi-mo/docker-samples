@@ -68,3 +68,19 @@ export const getUserById = async (id: number, res: ServerResponse) => {
     handleError(res, error);
   }
 };
+
+export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
+  try {
+    const user: Omit<User, "id"> = await parseBody(req);
+    const connection = await createConnection();
+    await connection.query("INSERT INTO users (name, email) VALUES (?, ?)", [
+      user.name,
+      user.email,
+    ]);
+    connection.end();
+    res.writeHead(201, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "User created" }));
+  } catch (error) {
+    handleError(res, error);
+  }
+};
