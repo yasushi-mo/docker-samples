@@ -1,4 +1,4 @@
-import { ServerResponse } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { createConnection } from "./database";
 import { RowDataPacket } from "mysql2";
 
@@ -12,6 +12,26 @@ const handleError = (res: ServerResponse, error: unknown) => {
   console.error("Error: ", error);
   res.writeHead(500, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ message: "Internal Server Error" }));
+};
+
+const parseBody = (req: IncomingMessage): Promise<Omit<User, "id">> => {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      // Convert the chunk to a string and append it to the body
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      try {
+        // Parse the accumulated body as JSON
+        const parseBody: Omit<User, "id"> = JSON.parse(body);
+        resolve(parseBody);
+      } catch (error) {
+        // Reject the promise if parsing fails
+        reject(error);
+      }
+    });
+  });
 };
 
 export const getUsers = async (res: ServerResponse) => {
