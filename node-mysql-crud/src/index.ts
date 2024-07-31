@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
 import { createConnection } from "./database";
-import { createUser, getUserById, getUsers } from "./users";
+import { createUser, getUserById, getUsers, updateUser } from "./users";
 
 const handleRequest = async (req: IncomingMessage, res: ServerResponse) => {
   const [_, resource, resourceId] = req.url?.split("/") || [];
@@ -21,6 +21,9 @@ const handleRequest = async (req: IncomingMessage, res: ServerResponse) => {
       break;
     case "POST":
       await createUser(req, res);
+      break;
+    case "PUT":
+      id && (await updateUser(id, req, res));
       break;
     default:
       res.writeHead(404, { "Content-Type": "application/json" });

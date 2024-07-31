@@ -39,6 +39,7 @@ export const getUsers = async (res: ServerResponse) => {
     const connection = await createConnection();
     const [rows] = await connection.query<User[]>("SELECT * FROM users");
     await connection.end();
+
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(rows));
   } catch (error) {
@@ -72,14 +73,38 @@ export const getUserById = async (id: number, res: ServerResponse) => {
 export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
   try {
     const user: Omit<User, "id"> = await parseBody(req);
+
     const connection = await createConnection();
     await connection.query("INSERT INTO users (name, email) VALUES (?, ?)", [
       user.name,
       user.email,
     ]);
     connection.end();
+
     res.writeHead(201, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "User created" }));
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+export const updateUser = async (
+  id: number,
+  req: IncomingMessage,
+  res: ServerResponse
+) => {
+  try {
+    const user: Omit<User, "id"> = await parseBody(req);
+
+    const connection = await createConnection();
+    await connection.query(
+      "UPDATE users SET name = ?, email = ? WHERE id = ?",
+      [user.name, user.email, id]
+    );
+    connection.end();
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "User updated" }));
   } catch (error) {
     handleError(res, error);
   }
