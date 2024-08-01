@@ -50,12 +50,12 @@ export const getUsers = async (res: ServerResponse) => {
 export const getUserById = async (id: number, res: ServerResponse) => {
   try {
     const connection = await createConnection();
-    const [rows] = await connection.query<User[]>(
+    const [users] = await connection.query<User[]>(
       "SELECT * FROM users WHERE id = ?",
       [id]
     );
     connection.end();
-    const user = rows[0];
+    const user = users[0];
 
     if (!user) {
       res.writeHead(404, { "Content-Type": "application/json" });
@@ -94,9 +94,22 @@ export const updateUser = async (
   res: ServerResponse
 ) => {
   try {
-    const user: Omit<User, "id"> = await parseBody(req);
-
     const connection = await createConnection();
+
+    const [targetUsers] = await connection.query<User[]>(
+      "SELECT * FROM users WHERE id = ?",
+      [id]
+    );
+    const targetUser = targetUsers[0];
+
+    if (!targetUser) {
+      connection.end();
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "User not found" }));
+      return;
+    }
+
+    const user: Omit<User, "id"> = await parseBody(req);
     await connection.query(
       "UPDATE users SET name = ?, email = ? WHERE id = ?",
       [user.name, user.email, id]
