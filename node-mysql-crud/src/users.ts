@@ -122,3 +122,30 @@ export const updateUser = async (
     handleError(res, error);
   }
 };
+
+export const deleteUser = async (id: number, res: ServerResponse) => {
+  try {
+    const connection = await createConnection();
+
+    const [targetUsers] = await connection.query<User[]>(
+      "SELECT * FROM users WHERE id = ?",
+      [id]
+    );
+    const targetUser = targetUsers[0];
+
+    if (!targetUser) {
+      connection.end();
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "User not found" }));
+      return;
+    }
+
+    await connection.query("DELETE FROM users WHERE id = ?", [id]);
+    connection.end();
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "User deleted" }));
+  } catch (error) {
+    handleError(res, error);
+  }
+};
