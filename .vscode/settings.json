@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["codepaths", "mysqld", "tsbuildinfo"]
+  "cSpell.words": [
+    "codepaths",
+    "mysqld",
+    "ormconfig",
+    "sampledb",
+    "tsbuildinfo",
+    "userpassword"
+  ]
 }
