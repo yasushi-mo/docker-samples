@@ -7,15 +7,15 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "CommonJS",
+    "target": "ES2022",
 
     // For nodejs:
     // "lib": ["esnext"],
     "types": ["node"],
 
     // Other Outputs
-    "sourceMap": true,
+    // "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
 
