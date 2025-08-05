@@ -8,20 +8,22 @@ services:
       - type: bind
         source: ./ # Source code file path
         target: /app
+    # environment:
+    #   DB_HOST: db
+    #   DB_USER: user
+    #   DB_PASSWORD: userpassword
+    #   DB_NAME: sampledb
     environment:
-      DB_HOST: db
-      DB_USER: user
-      DB_PASSWORD: userpassword
-      DB_NAME: sampledb
+      # Dockerコンテナ内からDBに接続するための設定
+      DATABASE_URL: postgresql://user:userpassword@db:5432/sampledb
+    depends_on:
+      - db
   db:
     container_name: "db-container"
     image: postgres:17.5-alpine3.22
     ports:
       - "5432:5432"
     volumes:
-      - type: bind
-        source: ./db
-        target: /docker-entrypoint-initdb.d
       - type: volume
         source: db-volume
         target: /var/lib/postgresql/data
