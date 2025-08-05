@@ -8,13 +8,8 @@ services:
       - type: bind
         source: ./ # Source code file path
         target: /app
-    # environment:
-    #   DB_HOST: db
-    #   DB_USER: user
-    #   DB_PASSWORD: userpassword
-    #   DB_NAME: sampledb
     environment:
-      # Dockerコンテナ内からDBに接続するための設定
+      # アプリケーションコンテナからDBへの接続情報
       DATABASE_URL: postgresql://user:userpassword@db:5432/sampledb
     depends_on:
       - db
