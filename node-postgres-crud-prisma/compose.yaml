@@ -1,0 +1,30 @@
+services:
+  app:
+    container_name: "app-container"
+    build: . # Dockerfile path
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./ # Source code file path
+        target: /app
+    environment:
+      # アプリケーションコンテナからDBへの接続情報
+      DATABASE_URL: postgresql://user:userpassword@db:5432/sampledb
+    depends_on:
+      - db
+  db:
+    container_name: "db-container"
+    image: postgres:17.5-alpine3.22
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: volume
+        source: db-volume
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: userpassword
+      POSTGRES_DB: sampledb
+volumes:
+  db-volume:
