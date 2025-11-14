@@ -11,11 +11,15 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^24.1.0",
-    "prisma": "^6.13.0",
+    "prisma": "^6.19.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/client": "^6.13.0"
+    "@prisma/client": "^6.19.0"
+  },
+  "volta": {
+    "node": "24.11.1",
+    "npm": "11.6.2"
   }
 }
