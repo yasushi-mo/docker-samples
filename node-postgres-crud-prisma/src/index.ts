@@ -1,5 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import express from "express";
+import express, { Request, Response } from "express";
+import { validate } from "./middlewares/validate.middleware";
+import {
+  CreateUserInput,
+  createUserSchema,
+  UpdateUserInput,
+  updateUserSchema,
+  UserIdParam,
+  userIdSchema,
+} from "./schemas/user.schema";
+import z from "zod";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -25,29 +35,33 @@ process.on("SIGINT", async () => {
 });
 
 // ユーザー作成
-app.post("/users", async (req, res) => {
-  try {
-    const { email, name } = req.body;
+app.post(
+  "/users",
+  validate(createUserSchema.extend({ body: createUserSchema })),
+  async (req: Request<{}, {}, CreateUserInput>, res: Response) => {
+    try {
+      const { email, name } = req.body;
 
-    if (!email || !name)
-      return res.status(400).json({ error: "Email and name are required" });
+      if (!email || !name)
+        return res.status(400).json({ error: "Email and name are required" });
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name,
-      },
-    });
+      const user = await prisma.user.create({
+        data: {
+          email,
+          name,
+        },
+      });
 
-    res.status(201).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create user" });
+      res.status(201).json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
   }
-});
+);
 
 // 全ユーザー取得
-app.get("/users", async (req, res) => {
+app.get("/users", async (_: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany();
     res.json(users);
@@ -58,55 +72,76 @@ app.get("/users", async (req, res) => {
 });
 
 // 特定ユーザー取得
-app.get("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await prisma.user.findUnique({
-      where: { id: Number(id) },
-    });
+app.get(
+  "/users/:id",
+  validate(userIdSchema.extend({ params: userIdSchema })),
+  async (req: Request<UserIdParam>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await prisma.user.findUnique({
+        where: { id: Number(id) },
+      });
 
-    if (!user) return res.status(404).json({ error: "User not found" });
+      if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch user" });
+      res.json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch user" });
+    }
   }
-});
+);
 
 // ユーザー更新
-app.put("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { email, name } = req.body;
+app.put(
+  "/users/:id",
+  validate(
+    z.object({
+      params: userIdSchema,
+      body: updateUserSchema,
+    })
+  ),
+  async (req: Request<UserIdParam, {}, UpdateUserInput>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { email, name } = req.body;
 
-    const user = await prisma.user.update({
-      where: { id: Number(id) },
-      data: {
-        ...(email && { email }),
-        ...(name && { name }),
-      },
-    });
+      const user = await prisma.user.update({
+        where: { id: Number(id) },
+        data: {
+          ...(email && { email }),
+          ...(name && { name }),
+        },
+      });
 
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to update user" });
+      res.json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
   }
-});
+);
 
 // ユーザー削除
-app.delete("/users/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+app.delete(
+  "/users/:id",
+  validate(
+    userIdSchema.extend({
+      params: userIdSchema,
+    })
+  ),
+  async (req: Request<UserIdParam>, res: Response) => {
+    try {
+      const { id } = req.params;
 
-    await prisma.user.delete({
-      where: { id: Number(id) },
-    });
+      await prisma.user.delete({
+        where: { id: Number(id) },
+      });
 
-    res.status(204).send();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to delete user" });
+      res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
   }
-});
+);
