@@ -37,7 +37,7 @@ process.on("SIGINT", async () => {
 // ユーザー作成
 app.post(
   "/users",
-  validate(createUserSchema.extend({ body: createUserSchema })),
+  validate(z.object({ body: createUserSchema })),
   async (req: Request<{}, {}, CreateUserInput>, res: Response) => {
     try {
       const { email, name } = req.body;
@@ -74,7 +74,7 @@ app.get("/users", async (_: Request, res: Response) => {
 // 特定ユーザー取得
 app.get(
   "/users/:id",
-  validate(userIdSchema.extend({ params: userIdSchema })),
+  validate(z.object({ params: userIdSchema })),
   async (req: Request<UserIdParam>, res: Response) => {
     try {
       const { id } = req.params;
@@ -126,7 +126,7 @@ app.put(
 app.delete(
   "/users/:id",
   validate(
-    userIdSchema.extend({
+    z.object({
       params: userIdSchema,
     })
   ),
