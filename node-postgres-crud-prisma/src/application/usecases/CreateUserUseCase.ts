@@ -22,22 +22,19 @@ export class CreateUserUseCase {
     const email = new Email(input.email);
     const name = new UserName(input.name);
 
-    // ビジネスルール: メールアドレスの重複チェック
+    // 2. ビジネスルール: メールアドレスの重複チェック
     const exists = await this.userRepository.existsByEmail(email);
     if (exists) {
       throw new Error("Email already exists");
     }
 
-    // エンティティの生成
+    // 3. エンティティの生成
     const user = User.create(email, name);
 
-    // データ永続化
+    // 4. 永続化
     const savedUser = await this.userRepository.save(user);
 
-    return {
-      id: savedUser.getId()!.getValue(),
-      email: savedUser.getEmail().getValue(),
-      name: savedUser.getName().getValue(),
-    };
+    // 5. 結果の返却
+    return savedUser.toObject();
   }
 }
