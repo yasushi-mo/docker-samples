@@ -10,7 +10,7 @@ export class User {
   ) {}
 
   /** ファクトリーメソッド: 新規ユーザー作成（IDなし） */
-  static create(email: Email, name: UserName): Omit<User, "id"> {
+  static create(email: Email, name: UserName): User {
     return new User(null, email, name);
   }
 
