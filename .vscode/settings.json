@@ -5,6 +5,7 @@
     "ormconfig",
     "sampledb",
     "tsbuildinfo",
+    "usecases",
     "userpassword"
   ]
 }
