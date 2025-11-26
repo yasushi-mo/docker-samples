@@ -17,6 +17,7 @@ import { GetAllUsersUseCase } from "./application/usecases/GetAllUsersUseCase";
 import { UpdateUserUseCase } from "./application/usecases/UpdateUserUseCase";
 import { DeleteUserUseCase } from "./application/usecases/DeleteUserUseCase";
 import { UserController } from "./presentation/controllers/UserController";
+import { setupUserRoutes } from "./presentation/routes/userRoutes";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -54,6 +55,7 @@ const userController = new UserController(
 );
 
 // 4. ルーティングの設定
+setupUserRoutes(app, userController);
 
 // サーバー起動
 app.listen(PORT, () => {
