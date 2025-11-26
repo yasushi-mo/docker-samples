@@ -1,15 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express";
-import { validate } from "./middlewares/validate.middleware";
-import {
-  CreateUserInput,
-  createUserSchema,
-  UpdateUserInput,
-  updateUserSchema,
-  UserIdParam,
-  userIdSchema,
-} from "./schemas/user.schema";
-import z from "zod";
+import express from "express";
 import { PrismaUserRepository } from "./infrastructure/prisma/PrismaUserRepository";
 import { CreateUserUseCase } from "./application/usecases/CreateUserUseCase";
 import { GetUserUseCase } from "./application/usecases/GetUserUseCase";
@@ -17,7 +7,7 @@ import { GetAllUsersUseCase } from "./application/usecases/GetAllUsersUseCase";
 import { UpdateUserUseCase } from "./application/usecases/UpdateUserUseCase";
 import { DeleteUserUseCase } from "./application/usecases/DeleteUserUseCase";
 import { UserController } from "./presentation/controllers/UserController";
-import { setupUserRoutes } from "./presentation/routes/userRoutes";
+import { setupUserRoutes } from "./presentation/routes/UserRoutes";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -27,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // ヘルスチェック用エンドポイント
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.json({ message: "Server is running" });
 });
 
